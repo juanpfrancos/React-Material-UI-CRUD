@@ -184,10 +184,11 @@ function Tab(){
           </TableBody>
         </Table>
         <MaybeLoading loading={loading} />
+
         <Container>
-          <Button variant="contained" disabled={buttonDelete} onClick={()=>peticionDelete()}>Eliminar</Button>
-          <Button variant="contained" disabled={buttonEdit} onClick={()=> setEdit(true)}>Editar</Button>
-          <Button variant="contained" onClick={()=> setAdd(true)}>Nuevo</Button>
+          <Button variant="contained" disabled={buttonDelete} onClick={()=>{peticionDelete(); setAdd(false); setEdit(false);}}>Eliminar</Button>
+          <Button variant="contained" disabled={buttonEdit} onClick={()=>{setEdit(true); setAdd(false);}}>Editar</Button>
+          <Button variant="contained" onClick={()=>{setAdd(true); setEdit(false);}}>Nuevo</Button>
         </Container>
       </Paper>
       {add ?
