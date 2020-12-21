@@ -47,12 +47,11 @@ function Tab(){
   const [loading, setLoading] = useState(true) /*Loading progress state */
   const [add, setAdd] = useState(false)
   const [edit, setEdit] = useState(false)
-    /*Input create form state*/
   const [data, setData] = useState({
       name: '',
       price: '',
       reference: '',
-    })
+    }) /*Input create form state*/
 
   useEffect(()=>{
     peticionGet();
