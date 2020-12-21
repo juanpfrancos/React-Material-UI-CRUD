@@ -1,6 +1,5 @@
 import React, { useState, useEffect} from 'react';
 import TextField from '@material-ui/core/TextField'
-import Edit from './editar'
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -45,42 +44,22 @@ function Tab(){
     { name: 'Price', active: false, numeric: true },
     { name: 'Reference', active: false },
   ]);
-  const [loading, setLoading] = useState(true) /*Loading progress */
+  const [loading, setLoading] = useState(true) /*Loading progress state */
   const [add, setAdd] = useState(false)
   const [edit, setEdit] = useState(false)
-    /*Input form state*/
-    const [data, setData] = useState({
+    /*Input create form state*/
+  const [data, setData] = useState({
       name: '',
       price: '',
       reference: '',
     })
-    
-    const inputChange = (event) =>{
-      setData({
-        ...data,
-        [event.target.name]:event.target.value,
-      })
-    }
-  /* Input form state*/
-  const sendData = (event) =>{
-    event.preventDefault();
-    axios.post('http://localhost:8000/Products/',data)
-    .then(function(response){
-      console.log(response);
-      console.log(data);
-      setRows(rows.concat(response.data)) /*Añade al state de la tabla el producto enviado a la API */
-      event.target.reset() /*Reseteal el formulario después de enviar el producto*/
-    })
-    .catch(function (error)  {
-      console.log(error);
-    })
-  }
 
-  useEffect(async()=>{
-    await peticionGet();
+  useEffect(()=>{
+    peticionGet();
     setLoading(false);
   },[])
 
+  
   const peticionGet=async()=>{
     await axios.get('http://localhost:8000/Products/')
     .then(response=>{
@@ -96,6 +75,56 @@ function Tab(){
     })
   }
   
+  /* Input form state*/
+  const sendData = (event) =>{
+    event.preventDefault();
+    axios.post('http://localhost:8000/Products/',data)
+    .then(function(response){
+      console.log(response);
+      console.log(data);
+      setRows(rows.concat(response.data)) /*Añade al state de la tabla el producto enviado a la API */
+      event.target.reset() /*Reseteal el formulario después de enviar el producto*/
+    })
+    .catch(function (error)  {
+      console.log(error);
+    })
+  }
+
+  const sendPutData = async(event) =>{
+    event.preventDefault();
+    await axios.put('http://localhost:8000/Products/'+selRow.id+'/', selRow)
+    .then(function(){
+      let dataNueva=rows;
+      dataNueva = dataNueva.map(rows=>{
+        if(selRow.id===rows.id){
+          rows.name=selRow.name;
+          rows.price=selRow.price;
+          rows.reference=selRow.reference;
+        }
+        return rows;
+      })
+      console.table(dataNueva);
+      setRows(dataNueva);
+    })
+    .catch(function (error)  {
+      console.log(error);
+    })
+  }
+
+
+  const inputChange = (event) =>{
+    setData({
+      ...data,
+      [event.target.name]:event.target.value,
+    })
+  }
+
+  const inputEditChange = (event) =>{
+    setSelRow({
+      ...selRow,
+      [event.target.name]:event.target.value,
+    })
+  }
 
   const onRowClick = id => () => {
     const newRows = [...rows];
@@ -151,14 +180,14 @@ function Tab(){
                 <TableCell>{row.price}</TableCell>
                 <TableCell>{row.reference}</TableCell>
               </TableRow>
-            ))}
+            ))}     
           </TableBody>
         </Table>
         <MaybeLoading loading={loading} />
         <Container>
           <Button variant="contained" disabled={buttonDelete} onClick={()=>peticionDelete()}>Eliminar</Button>
           <Button variant="contained" disabled={buttonEdit} onClick={()=> setEdit(true)}>Editar</Button>
-          <Button variant="contained"  onClick={()=> setAdd(true)}>Nuevo</Button>
+          <Button variant="contained" onClick={()=> setAdd(true)}>Nuevo</Button>
         </Container>
       </Paper>
       {add ?
@@ -176,9 +205,18 @@ function Tab(){
       : null}
 
       {edit ? 
-        
-      <Edit id={selRow.id} product={selRow.name} price={selRow.price} reference={selRow.reference} onLoad={()=> setAdd(false)} />
-      : null}
+        <>
+          <Typography variant="h3">Modificar Producto</Typography>
+          <form className={classes.root} noValidate autoComplete="off" onSubmit={sendPutData}>
+              <TextField id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputEditChange} value={selRow.name} />
+              <TextField id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputEditChange} value={selRow.price} />
+              <TextField id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputEditChange} value={selRow.reference} />
+              <Button variant="contained" color="primary" type="submit">
+                Guardar
+              </Button>
+          </form>
+        </>
+        : null}
       </>
     )
 }
