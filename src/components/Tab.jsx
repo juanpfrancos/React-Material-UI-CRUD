@@ -16,11 +16,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const useStyles = makeStyles(theme => ({
   root: {
     '& > *': {
-      margin: theme.spacing(1)* 2,
-      textAlign: 'center'
+      margin: theme.spacing(1),
+      textAlign: 'center',
+      verticalAlign: 'middle',
     },
   },
-  card: { margin: theme.spacing(1) * 2, maxWidth: 300 },
   progress: { margin: theme.spacing(2) }
 }));
 
@@ -184,12 +184,12 @@ function Tab(){
         </Table>
         <MaybeLoading loading={loading} />
 
-        <Container>
+        <Container className={classes.root}>
           <Button variant="contained" disabled={buttonDelete} onClick={()=>{peticionDelete(); setAdd(false); setEdit(false);}}>Eliminar</Button>
           <Button variant="contained" disabled={buttonEdit} onClick={()=>{setEdit(true); setAdd(false);}}>Editar</Button>
           <Button variant="contained" onClick={()=>{setAdd(true); setEdit(false);}}>Nuevo</Button>
         </Container>
-      </Paper>
+    
       {add ?
       <>
         <Typography variant="h3">Agregar Producto</Typography>
@@ -197,7 +197,7 @@ function Tab(){
           <TextField id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputChange} />
           <TextField id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputChange}/>
           <TextField id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputChange}/>
-          <Button variant="contained" color="primary" type="submit">
+          <Button variant="contained" color="primary" type="submit" size={'large'}>
             Guardar
           </Button>
         </form>
@@ -206,17 +206,20 @@ function Tab(){
 
       {edit ? 
         <>
+        <Container >
           <Typography variant="h3">Modificar Producto</Typography>
           <form className={classes.root} noValidate autoComplete="off" onSubmit={sendPutData}>
               <TextField id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputEditChange} value={selRow.name} />
               <TextField id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputEditChange} value={selRow.price} />
               <TextField id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputEditChange} value={selRow.reference} />
-              <Button variant="contained" color="primary" type="submit">
+              <Button variant="contained" color="primary" type="submit" size={'large'}>
                 Guardar
               </Button>
           </form>
+        </Container>
         </>
         : null}
+        </Paper>
       </>
     )
 }
