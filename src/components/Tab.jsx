@@ -110,7 +110,6 @@ function Tab(){
     })
   }
 
-
   const inputChange = (event) =>{
     setData({
       ...data,
@@ -159,9 +158,7 @@ function Tab(){
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell
-                  key={column.name}
-                >
+                <TableCell key={column.name}>
                   {column.name}
                 </TableCell>
               ))}
