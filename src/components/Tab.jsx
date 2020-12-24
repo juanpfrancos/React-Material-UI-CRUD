@@ -13,15 +13,13 @@ import Paper from '@material-ui/core/Paper';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+const baseURL='https://drfproducts.azurewebsites.net/Products/'
+
 const useStyles = makeStyles(theme => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-      textAlign: 'center',
-      verticalAlign: 'middle',
-    },
-  },
-  progress: { margin: theme.spacing(2) }
+  root: { margin: theme.spacing(1) * 2, padding:theme.spacing(1) * 2, textAlign: 'center'},
+  progress: { margin: theme.spacing(2) },
+  mg: { margin:theme.spacing(1)},
+  contbutt: {paddingTop:theme.spacing(2)}
 }));
 
 
@@ -53,21 +51,22 @@ function Tab(){
       reference: '',
     }) /*Input create form state*/
 
-  useEffect(()=>{
-    peticionGet();
+    /* Use async await for loading */
+  useEffect(async()=>{
+    await  peticionGet();
     setLoading(false);
   },[])
 
   
   const peticionGet=async()=>{
-    await axios.get('http://localhost:8000/Products/')
+    await axios.get(baseURL)
     .then(response=>{
       setRows(response.data);
     })
   }
 
   const peticionDelete=async()=>{
-    await axios.delete('http://localhost:8000/Products/'+selRow.id+'/')
+    await axios.delete(baseURL+selRow.id+'/')
     .then(response=>{
       setRows(rows.filter(row=>row.id!==selRow.id)) /*Actualiza el state excluyendo el campo eliminado*/
       alert('Producto eliminado')
@@ -77,7 +76,7 @@ function Tab(){
   /* Input form state*/
   const sendData = (event) =>{
     event.preventDefault();
-    axios.post('http://localhost:8000/Products/',data)
+    axios.post(baseURL,data)
     .then(function(response){
       console.log(response);
       console.log(data);
@@ -91,7 +90,7 @@ function Tab(){
 
   const sendPutData = async(event) =>{
     event.preventDefault();
-    await axios.put('http://localhost:8000/Products/'+selRow.id+'/', selRow)
+    await axios.put(baseURL+selRow.id+'/', selRow)
     .then(function(){
       let dataNueva=rows;
       dataNueva = dataNueva.map(rows=>{
@@ -152,7 +151,7 @@ function Tab(){
         <>
       <Paper className={classes.root}>
       <Typography variant="h4" id="tableTitle">
-      {`(${selections()}) rows selected`}
+      {`(${selections()}) Productos Seleccionados`}
       </Typography>
         <Table>
           <TableHead>
@@ -179,22 +178,21 @@ function Tab(){
             ))}     
           </TableBody>
         </Table>
-        <MaybeLoading loading={loading} />
-
-        <Container className={classes.root}>
-          <Button variant="contained" disabled={buttonDelete} onClick={()=>{peticionDelete(); setAdd(false); setEdit(false);}}>Eliminar</Button>
-          <Button variant="contained" disabled={buttonEdit} onClick={()=>{setEdit(true); setAdd(false);}}>Editar</Button>
-          <Button variant="contained" onClick={()=>{setAdd(true); setEdit(false);}}>Nuevo</Button>
+        <MaybeLoading className={classes.root} loading={loading} />
+        <Container className={classes.contbutt}>
+          <Button className={classes.mg} variant="contained" disabled={buttonDelete} onClick={()=>{peticionDelete(); setAdd(false); setEdit(false);}}>Eliminar</Button>
+          <Button className={classes.mg} variant="contained" disabled={buttonEdit} onClick={()=>{setEdit(true); setAdd(false);}}>Editar</Button>
+          <Button className={classes.mg} variant="contained" onClick={()=>{setAdd(true); setEdit(false);}}>Nuevo</Button>
         </Container>
     
       {add ?
       <>
         <Typography variant="h3">Agregar Producto</Typography>
         <form className={classes.root} noValidate autoComplete="off" onSubmit={sendData}>
-          <TextField id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputChange} />
-          <TextField id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputChange}/>
-          <TextField id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputChange}/>
-          <Button variant="contained" color="primary" type="submit" size={'large'}>
+          <TextField className={classes.mg} id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputChange} />
+          <TextField className={classes.mg} id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputChange}/>
+          <TextField className={classes.mg} id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputChange}/>
+          <Button className={classes.mg} variant="contained" color="primary" type="submit" size={'large'}>
             Guardar
           </Button>
         </form>
@@ -206,10 +204,10 @@ function Tab(){
         <Container >
           <Typography variant="h3">Modificar Producto</Typography>
           <form className={classes.root} noValidate autoComplete="off" onSubmit={sendPutData}>
-              <TextField id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputEditChange} value={selRow.name} />
-              <TextField id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputEditChange} value={selRow.price} />
-              <TextField id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputEditChange} value={selRow.reference} />
-              <Button variant="contained" color="primary" type="submit" size={'large'}>
+              <TextField className={classes.mg} id="outlined-basic" label="Producto" variant="outlined" name="name" onChange={inputEditChange} value={selRow.name} />
+              <TextField className={classes.mg} id="outlined-basic" label="Precio" variant="outlined" name="price" onChange={inputEditChange} value={selRow.price} />
+              <TextField className={classes.mg} id="outlined-basic" label="Referencia" variant="outlined" name="reference" onChange={inputEditChange} value={selRow.reference} />
+              <Button className={classes.mg} variant="contained" color="primary" type="submit" size={'large'}>
                 Guardar
               </Button>
           </form>
